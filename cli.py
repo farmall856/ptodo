@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 import typer
+from rich import print
+from rich.panel import Panel
 
 app = typer.Typer()
 
@@ -25,16 +27,21 @@ def add(description: str):
     save_tasks(tasks)
     typer.echo(f"Task added: {description}")
 
+
 @app.command()
 def list():
     """List all tasks."""
     tasks = load_tasks()
     if not tasks:
-        typer.echo("No tasks found.")
-        return
-    for index, task in enumerate(tasks, start=1):
-        status = "✓" if task["completed"] else "✗"
-        typer.echo(f"{index}. {status} {task['description']}")
+        content = "No tasks found."
+    else:
+        content = '\n'.join([
+            f"{index}. {'✓' if task['completed'] else '✗'} {task['description']}"
+            for index, task in enumerate(tasks, start=1)
+        ])
+    
+    panel = Panel(content, title="Tasks", title_align="left", expand=False)
+    print(panel)
 
 @app.command()
 def complete(index: int):
