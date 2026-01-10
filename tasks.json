@@ -2,5 +2,9 @@
     {
         "description": "Complete ptodo",
         "completed": false
+    },
+    {
+        "description": "Fix icemaker",
+        "completed": true
     }
 ]

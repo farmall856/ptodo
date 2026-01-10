@@ -25,8 +25,7 @@ def add(description: str):
     tasks = load_tasks()
     tasks.append({"description": description, "completed": False})
     save_tasks(tasks)
-    typer.echo(f"Task added: {description}")
-
+    custom_echo(f"Task added: {description}", command="Add")
 
 @app.command()
 def list():
@@ -40,30 +39,33 @@ def list():
             for index, task in enumerate(tasks, start=1)
         ])
     
-    panel = Panel(content, title="Tasks", title_align="left", expand=False)
-    print(panel)
+    custom_echo(content, command="List")
 
 @app.command()
 def complete(index: int):
     """Complete a task by its index."""
     tasks = load_tasks()
     if index < 1 or index > len(tasks):
-        typer.echo("Invalid task index.")
+        custom_echo("Invalid task index.", command="Complete")
         return
     tasks[index - 1]["completed"] = True
     save_tasks(tasks)
-    typer.echo(f"Task {index} completed.")
+    custom_echo(f"Task {index} completed.", command="Complete")
 
 @app.command()
 def delete(index: int):
     """Delete a task by its index."""
     tasks = load_tasks()
     if index < 1 or index > len(tasks):
-        typer.echo("Invalid task index.")
+        custom_echo("Invalid task index.", command="Delete")
         return
     del tasks[index - 1]
     save_tasks(tasks)
-    typer.echo(f"Task {index} deleted.")
+    custom_echo(f"Task {index} deleted.", command="Delete")
+
+def custom_echo(content: str, command: str = "Todos"):
+    panel = Panel(content, title=command, title_align="left", expand=False)
+    print(panel)
 
 if __name__ == "__main__":
     app()
