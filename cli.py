@@ -1,0 +1,62 @@
+import json
+from pathlib import Path
+import typer
+
+app = typer.Typer()
+
+# Define the path for the tasks file
+TASKS_FILE = "tasks.json"
+
+def load_tasks():
+    if not Path(TASKS_FILE).exists():
+        return []
+    with open(TASKS_FILE, "r") as f:
+        return json.load(f)
+
+def save_tasks(tasks):
+    with open(TASKS_FILE, "w") as f:
+        json.dump(tasks, f, indent=4)
+
+@app.command()
+def add(description: str):
+    """Add a new task."""
+    tasks = load_tasks()
+    tasks.append({"description": description, "completed": False})
+    save_tasks(tasks)
+    typer.echo(f"Task added: {description}")
+
+@app.command()
+def list():
+    """List all tasks."""
+    tasks = load_tasks()
+    if not tasks:
+        typer.echo("No tasks found.")
+        return
+    for index, task in enumerate(tasks, start=1):
+        status = "✓" if task["completed"] else "✗"
+        typer.echo(f"{index}. {status} {task['description']}")
+
+@app.command()
+def complete(index: int):
+    """Complete a task by its index."""
+    tasks = load_tasks()
+    if index < 1 or index > len(tasks):
+        typer.echo("Invalid task index.")
+        return
+    tasks[index - 1]["completed"] = True
+    save_tasks(tasks)
+    typer.echo(f"Task {index} completed.")
+
+@app.command()
+def delete(index: int):
+    """Delete a task by its index."""
+    tasks = load_tasks()
+    if index < 1 or index > len(tasks):
+        typer.echo("Invalid task index.")
+        return
+    del tasks[index - 1]
+    save_tasks(tasks)
+    typer.echo(f"Task {index} deleted.")
+
+if __name__ == "__main__":
+    app()
