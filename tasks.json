@@ -6,5 +6,20 @@
     {
         "description": "Fix icemaker",
         "completed": true
+    },
+    {
+        "description": "Task 1",
+        "completed": false,
+        "due_date": "1/15/2026"
+    },
+    {
+        "description": "Complete ptodo",
+        "completed": false,
+        "due_date": null
+    },
+    {
+        "description": "Pickup car",
+        "completed": false,
+        "due_date": null
     }
 ]
