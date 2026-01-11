@@ -1,3 +1,5 @@
+#!/usr/bin/env python\n\nimport json\nfrom pathlib import Path\nimport typer\nfrom rich import print, style\nfrom rich.panel import Panel\nfrom datetime import datetime\n"
+
 import json
 from pathlib import Path
 import typer
