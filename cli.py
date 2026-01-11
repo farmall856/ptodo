@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import typer
-from rich import print
+from rich import print, style
 from rich.panel import Panel
 from datetime import datetime
 
@@ -20,13 +20,33 @@ def save_tasks(tasks):
     with open(TASKS_FILE, "w") as f:
         json.dump(tasks, f, indent=4)
 
+def parse_date(date_str):
+    date_formats = ["%Y/%m/%d", "%m/%d/%Y"]
+    for date_format in date_formats:
+        try:
+            return datetime.strptime(date_str, date_format).strftime("%Y/%m/%d")
+        except ValueError:
+            pass
+    raise ValueError("Date format not supported. Please use one of the following formats: yyyy/mm/dd or mm/dd/yyyy")
+
 @app.command()
 def add(description: str, due_date: str = typer.Option(None, "--due-date", help="Due date for the task in YYYY-MM-DD format")):
     """Add a new task."""
-    tasks = load_tasks()
-    tasks.append({"description": description, "completed": False, "due_date": due_date})
-    save_tasks(tasks)
-    custom_echo(f"Task added: {description}", command="Add")
+    if due_date is None:
+        tasks = load_tasks()
+        tasks.append({"description": description, "completed": False})
+        save_tasks(tasks)
+        custom_echo(f"Task added: {description}", command="Add")
+    else:
+        try:
+            formatted_due_date = parse_date(due_date)
+            tasks = load_tasks()
+            tasks.append({"description": description, "completed": False, "due_date": formatted_due_date})
+            save_tasks(tasks)
+            custom_echo(f"Task added: {description} due on {formatted_due_date}", command="Add")
+        except ValueError as e:
+            custom_echo(str(e), command="Error")
+            return 
 
 @app.command()
 def list():
@@ -40,9 +60,25 @@ def list():
             status = '✓' if task['completed'] else '✗'
             due_date_info = f" due on {task.get('due_date', '')}" if 'due_date' in task and task['due_date'] is not None else ""
             item = f"{index}. {status} {task['description']}{due_date_info}"
-            items.append(item)
+            
+            # Apply red color for tasks that are not completed and have a past due date
+            current_date = datetime.now()
+            if not task['completed']:
+                due_date = task.get('due_date')
+                if due_date:
+                    due_date_obj = datetime.strptime(due_date, "%Y/%m/%d")
+                    if current_date > due_date_obj:
+                        style_obj = style.Style(color='red')
+                    else:
+                        style_obj = style.Style()
+                else:
+                    style_obj = style.Style()
+            else:
+                style_obj = style.Style(color='green')
+            
+            items.append((item, style_obj))
         
-        content = '\n'.join(items)
+        content = '\n'.join([f"[{style_obj}]{item}[/{style_obj}]" for item, style_obj in items])
     
     custom_echo(content, command="List")
 

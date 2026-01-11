@@ -1,7 +1,8 @@
 [
     {
-        "description": "Complete ptodo",
-        "completed": false
+        "description": "Smoke brisket 2",
+        "completed": false,
+        "due_date": "2026/01/03"
     },
     {
         "description": "Fix icemaker",
@@ -10,16 +11,26 @@
     {
         "description": "Task 1",
         "completed": false,
-        "due_date": "1/15/2026"
-    },
-    {
-        "description": "Complete ptodo",
-        "completed": false,
-        "due_date": null
+        "due_date": "2026/01/15"
     },
     {
         "description": "Pickup car",
         "completed": false,
-        "due_date": null
+        "due_date": "2026/01/16"
+    },
+    {
+        "description": "Euro date",
+        "completed": false,
+        "due_date": "2026/01/17"
+    },
+    {
+        "description": "Euro date",
+        "completed": false,
+        "due_date": "2026/01/17"
+    },
+    {
+        "description": "return minivan",
+        "completed": true,
+        "due_date": "2026/01/04"
     }
 ]
